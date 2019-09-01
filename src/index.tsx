@@ -1,10 +1,10 @@
 import React from "react"
 import { render } from "react-dom"
-import styled from "styled-components"
+import styled, { ThemeProvider } from "styled-components"
 
 
 const snaker = (num) => {
-  const header = ["rad-0", "line-h", "line-h","line-h"]
+  const header = ["rad-0", "line-h", "line-h","."]
   const templateL = [
     ["rad", "cnt", "cnt","."],
     ["rad", "line","line", "__"]
@@ -16,7 +16,7 @@ const snaker = (num) => {
       if(cell === ".") return "."
       if(cell === "__"){ 
         return (i === num-1)
-          ? `line-${i}` 
+          ? `.` 
           : `rad-${i+1}`
       }
       return `${cell}-${i}`
@@ -38,21 +38,20 @@ const Area = styled.div`
 `
 
 const Line = styled(Area)`
-  background: black;
+  background: ${({theme}) => theme.line};
 `
-const RadR = styled(Area)`
-  border-left: black solid 1px;
-  border-bottom: black solid 1px;
-  border-top: black solid 1px;
+const Rad = styled(Area)`
+  border-bottom: ${({theme}) => theme.line} solid 1px;
+  border-top: ${({theme}) => theme.line} solid 1px;
+  width: ${({theme}) => theme.radius};
+`
+const RadR = styled(Rad)`
+  border-left: ${({theme}) => theme.line} solid 1px;
   border-radius: 100% 0 0 100%;
-  width: 4em;
 `
-const RadL = styled(Area)`
-  border-right: black solid 1px;
-  border-bottom: black solid 1px;
-  border-top: black solid 1px;
+const RadL = styled(Rad)`
+  border-right: ${({theme}) => theme.line} solid 1px;
   border-radius: 0 100% 100% 0;
-  width: 4em;
 `
 
 const Content = styled(Area)`
@@ -86,15 +85,23 @@ const Snake = ({ children }) => {
   </Grid>
 }
 
+const theme = {
+  line: "black",
+  radius: "4em"
+}
 const App = () => {
   return (
+    <ThemeProvider theme={theme}>
+
     <Snake>
       <div>fruit</div>
       <div>apple</div>
       <div>banana</div>
       <div>grape</div>
       <div>orange</div>
+      <div>pinapple</div>
     </Snake>
+    </ThemeProvider>
   )
 }
 
