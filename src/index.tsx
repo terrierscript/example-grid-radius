@@ -95,7 +95,7 @@ const Snake = ({ children }) => {
 const theme = {
   line: "gray",
   radius: "4em",
-  weight: "6px"
+  weight: "1px"
 }
 const App = () => {
   return (
