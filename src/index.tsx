@@ -1,10 +1,14 @@
-import React, { useContext } from "react"
+import React, { useContext, useRef, createRef, FC } from "react"
 import { render } from "react-dom"
 import styled, { ThemeProvider, ThemeContext } from "styled-components"
+import * as ReactIs from "react-is"
 
 const snaker = (num, weight) => {
   const header = ["rad-0", "line-h", "line-h", "line-h"]
-  const templateL = [["rad", ".", "cnt", "."], ["rad", "line", "line", "__"]]
+  const templateL = [
+    ["rad", "cnt-a", "cnt-b", "."],
+    ["rad", "line", "line", "__"]
+  ]
   const templateR = templateL.map((t) => t.concat().reverse())
   const base = Array(num)
     .fill(null)
@@ -65,6 +69,50 @@ const Grid = styled.div`
   box-sizing: border-box;
 `
 
+const itemTo = (childs) => {
+  ReactIs
+}
+const SnakeItem = ({ children, num }) => {
+  const mago = React.Children.toArray(children.props.children)
+  console.log(ReactIs.typeOf(mago[0]))
+  return (
+    <>
+      <Content area={`cnt-a-${num}`}>{children}</Content>
+    </>
+  )
+}
+
+const SnakeChildrenContents = ({ children }) => {
+  return (
+    <>
+      {React.Children.map(children, (c, i) => {
+        return (
+          <SnakeItem key={i} num={i}>
+            {c}
+          </SnakeItem>
+        )
+      })}
+    </>
+  )
+}
+
+const SnakeLines: FC<{ n: number }> = ({ n }) =>
+  // @ts-ignore
+  Array.from({ length: n }, (_, i) => i).map((n) => (
+    <Line key={n} area={`line-${n}`} />
+  ))
+
+const SnakeRadius: FC<{ n: number }> = ({ n }) =>
+  // @ts-ignore
+  Array.from({ length: n }, (_, i) => i).map((n) => {
+    const area = `rad-${n}`
+    return n % 2 ? (
+      <RadL key={area} area={area}></RadL>
+    ) : (
+      <RadR key={area} area={area}></RadR>
+    )
+  })
+
 const Snake = ({ children }) => {
   const cnt = React.Children.count(children)
   const theme = useContext<any>(ThemeContext)
@@ -74,22 +122,9 @@ const Snake = ({ children }) => {
     <Grid template={area}>
       <Line area="line-h"></Line>
       <Line area="line-e"></Line>
-      {loop.map((n) => {
-        const area = `rad-${n}`
-        return n % 2 ? (
-          <RadL key={area} area={area}></RadL>
-        ) : (
-          <RadR key={area} area={area}></RadR>
-        )
-      })}
-      {loop.map((n) => (
-        <Line key={n} area={`line-${n}`} />
-      ))}
-      {React.Children.map(children, (c, i) => (
-        <Content key={i} area={`cnt-${i}`}>
-          {c}
-        </Content>
-      ))}
+      <SnakeRadius n={cnt} />
+      <SnakeLines n={cnt} />
+      <SnakeChildrenContents children={children} />
     </Grid>
   )
 }
@@ -99,6 +134,10 @@ const theme = {
   radius: "4em",
   weight: "1px"
 }
+
+const Avater = ({ children }) => children
+const Main = ({ children }) => children
+
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
