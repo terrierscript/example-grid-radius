@@ -3,11 +3,8 @@ import { render } from "react-dom"
 import styled, { ThemeProvider, ThemeContext } from "styled-components"
 
 const snaker = (num, weight) => {
-  const header = ["rad-0", "line-h", "line-h", "line-h", "line-h"]
-  const templateL = [
-    ["rad", ".", ".", "cnt", "."],
-    ["rad", "line", "line", "line", "__"]
-  ]
+  const header = ["rad-0", "line-h", "line-h", "line-h"]
+  const templateL = [["rad", ".", "cnt", "."], ["rad", "line", "line", "__"]]
   const templateR = templateL.map((t) => t.concat().reverse())
   const base = Array(num)
     .fill(null)
@@ -31,7 +28,7 @@ const snaker = (num, weight) => {
     })
     .join("\n")
 
-  const footer = "/ 3em 1fr 3em"
+  const footer = "/ 3em 1fr 1fr 3em"
   return [b, footer].join("\n")
 }
 
@@ -45,7 +42,7 @@ const Line = styled(Area)`
 const Rad = styled(Area)`
   border-bottom: ${({ theme }) => `${theme.line} solid ${theme.weight}`};
   border-top: ${({ theme }) => `${theme.line} solid ${theme.weight}`};
-  width: ${({ theme }) => theme.radius};
+  /* width: ${({ theme }) => theme.radius}; */
 `
 const RadR = styled(Rad)`
   border-left: ${({ theme }) => `${theme.line} solid ${theme.weight}`};
@@ -65,7 +62,9 @@ const Content = styled(Area)`
 const Grid = styled.div`
   display: grid;
   grid-template: ${(props) => props.template};
+  box-sizing: border-box;
 `
+
 const Snake = ({ children }) => {
   const cnt = React.Children.count(children)
   const theme = useContext<any>(ThemeContext)
