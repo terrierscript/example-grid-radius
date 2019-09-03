@@ -3,8 +3,11 @@ import { render } from "react-dom"
 import styled, { ThemeProvider, ThemeContext } from "styled-components"
 
 const snaker = (num, weight) => {
-  const header = ["rad-0", "line-h", "line-h", "edge-h"]
-  const templateL = [["rad", "cnt", "cnt", "."], ["rad", "line", "line", "__"]]
+  const header = ["rad-0", "line-h", "line-h", "line-h", "line-h"]
+  const templateL = [
+    ["rad", ".", ".", "cnt", "."],
+    ["rad", "line", "line", "line", "__"]
+  ]
   const templateR = templateL.map((t) => t.concat().reverse())
   const base = Array(num)
     .fill(null)
@@ -14,7 +17,7 @@ const snaker = (num, weight) => {
         line.map((cell, j) => {
           if (cell === ".") return "."
           if (cell === "__") {
-            return i === num - 1 ? `edge-e` : `rad-${i + 1}`
+            return i === num - 1 ? `line-e` : `rad-${i + 1}`
           }
           return `${cell}-${i}`
         })
@@ -66,12 +69,12 @@ const Grid = styled.div`
 const Snake = ({ children }) => {
   const cnt = React.Children.count(children)
   const theme = useContext<any>(ThemeContext)
-  console.log(theme)
   const area = snaker(cnt, theme.weight)
   const loop = Array.from({ length: cnt }, (_, i) => i)
   return (
     <Grid template={area}>
       <Line area="line-h"></Line>
+      <Line area="line-e"></Line>
       {loop.map((n) => {
         const area = `rad-${n}`
         return n % 2 ? (
