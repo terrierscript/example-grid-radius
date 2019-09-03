@@ -1,4 +1,4 @@
-import React, { useContext, useRef, createRef, FC } from "react"
+import React, { useContext, FC, ReactChild } from "react"
 import { render } from "react-dom"
 import styled, { ThemeProvider, ThemeContext } from "styled-components"
 import * as ReactIs from "react-is"
@@ -15,7 +15,7 @@ const snaker = (num, weight) => {
     .map((_, i) => {
       const template = i % 2 == 0 ? templateL : templateR
       return template.map((line) =>
-        line.map((cell, j) => {
+        line.map((cell) => {
           if (cell === ".") return "."
           if (cell === "__") {
             return i === num - 1 ? `line-e` : `rad-${i + 1}`
@@ -69,31 +69,38 @@ const Grid = styled.div`
   box-sizing: border-box;
 `
 
-const itemTo = (childs) => {
-  ReactIs
+const isReactElement = (item: SnakeItemElement): item is ReactChild => {
+  return (
+    ReactIs.isElement(item) ||
+    typeof item === "string" ||
+    typeof item === "number"
+  )
 }
-const SnakeItem = ({ children, num }) => {
-  const mago = React.Children.toArray(children.props.children)
-  console.log(ReactIs.typeOf(mago[0]))
+
+const SnakeItem: FC<{ item: SnakeItemElement; num: number }> = ({
+  item,
+  num
+}) => {
+  if (isReactElement(item)) {
+    return (
+      <>
+        <Content area={`cnt-b-${num}`}>{item}</Content>
+      </>
+    )
+  }
+  const { avater, main } = item
   return (
     <>
-      <Content area={`cnt-a-${num}`}>{children}</Content>
+      <Content area={`cnt-a-${num}`}>{avater}</Content>
+      <Content area={`cnt-b-${num}`}>{main}</Content>
     </>
   )
 }
 
-const SnakeChildrenContents = ({ children }) => {
-  return (
-    <>
-      {React.Children.map(children, (c, i) => {
-        return (
-          <SnakeItem key={i} num={i}>
-            {c}
-          </SnakeItem>
-        )
-      })}
-    </>
-  )
+const SnakeChildrenContents = ({ items }) => {
+  return items.map((c, i) => {
+    return <SnakeItem key={i} num={i} item={c} />
+  })
 }
 
 const SnakeLines: FC<{ n: number }> = ({ n }) =>
@@ -113,18 +120,17 @@ const SnakeRadius: FC<{ n: number }> = ({ n }) =>
     )
   })
 
-const Snake = ({ children }) => {
-  const cnt = React.Children.count(children)
+const Snake: FC<{ items: SnakeItemElement[] }> = ({ items }) => {
+  const cnt = items.length
   const theme = useContext<any>(ThemeContext)
   const area = snaker(cnt, theme.weight)
-  const loop = Array.from({ length: cnt }, (_, i) => i)
   return (
     <Grid template={area}>
       <Line area="line-h"></Line>
       <Line area="line-e"></Line>
       <SnakeRadius n={cnt} />
       <SnakeLines n={cnt} />
-      <SnakeChildrenContents children={children} />
+      <SnakeChildrenContents items={items} />
     </Grid>
   )
 }
@@ -135,19 +141,28 @@ const theme = {
   weight: "1px"
 }
 
-const Avater = ({ children }) => children
-const Main = ({ children }) => children
+type SnakeItemElement =
+  | {
+      avater: ReactChild
+      main: ReactChild
+    }
+  | ReactChild
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <Snake>
-        <div>apple</div>
-        <div>banana</div>
-        <div>grape</div>
-        <div>orange</div>
-        <div>pinapple</div>
-      </Snake>
+      <Snake
+        items={[
+          {
+            avater: "🍎",
+            main: <>apple</>
+          },
+          <div>banana</div>,
+          <div>grape</div>,
+          "orange",
+          <div>pinapple</div>
+        ]}
+      />
     </ThemeProvider>
   )
 }
