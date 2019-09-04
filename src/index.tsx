@@ -2,6 +2,16 @@ import React, { useContext, FC, ReactChild } from "react"
 import { render } from "react-dom"
 import styled, { ThemeProvider, ThemeContext } from "styled-components"
 import * as ReactIs from "react-is"
+// import { main } from "../wasm/src/lib.rs"
+// console.log(main)
+const start = async () => {
+  const { main } = await import("../wasm/Cargo.toml")
+  console.log(main())
+  // console.log(add(1, 2))
+}
+start().catch((e) => {
+  console.error(e)
+})
 
 const snaker = (num, weight) => {
   const header = ["rad-0", "line-h", "line-h", "line-h"]

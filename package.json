@@ -9,6 +9,8 @@
     "@types/react": "^16.9.2",
     "@types/react-dom": "^16.8.5",
     "parcel": "^1.12.3",
+    "parcel-bundler": "1.x",
+    "parcel-plugin-wasm.rs": "^1.2.12",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-is": "^16.9.0",
